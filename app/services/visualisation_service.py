@@ -3,6 +3,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import numpy as np
 import pandas as pd
+import json
 
 def smart_visualization_fallback(df, user_query):
     try:
@@ -108,3 +109,30 @@ def execute_plotly_code(code, df, user_query):
     except Exception as e:
         print(f"Visualization code execution failed: {str(e)}")
         return smart_visualization_fallback(df, user_query)
+
+def generate_plotly_js_code(df, user_query, model):
+    prompt = f"""
+    Given the following SQL query results as a JSON array:
+
+    {json.dumps(df.to_dict(orient='records'))}
+
+    Generate JavaScript code using Plotly.js to visualize this data. 
+    - Use Plotly.newPlot(container, data, layout).
+    - Use the container variable directly (not a string id).
+    - The code must be ready to run in a browser.
+    - The code must define data and layout, and then call Plotly.newPlot.
+    - Do not include any HTML or Python code, only JavaScript.
+    - Return only the JavaScript code, no explanations or markdown.
+
+    Example:
+    var data = [...];
+    var layout = {...};
+    Plotly.newPlot(container, data, layout);
+    """
+
+    response = model.generate_content(prompt)
+    code = response.text.strip()
+    # Optionally, strip markdown/code block formatting if present
+    if '```' in code:
+        code = code.split('```')[1].strip()
+    return code

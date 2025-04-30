@@ -1,4 +1,4 @@
-from app.services.visualisation_service import generate_plotly_code, execute_plotly_code
+from app.services.visualisation_service import generate_plotly_code, execute_plotly_code, generate_plotly_js_code
 from .sql_service import execute_query
 from .llm_services import generate_content
 import pandas as pd
@@ -92,14 +92,12 @@ def natural_language_to_sql(user_query, model, cursor, schema_info):
 
     if isinstance(results, str) and results.startswith("Error"):
         plotly_code = None
-        visualization = None
+        
     else:
-        plotly_code = generate_plotly_code(results, user_query, model)
-        visualization = execute_plotly_code(plotly_code, results, user_query)
+        plotly_code = generate_plotly_js_code(results, user_query, model)
     return {
         "query": sql_query,
         "results": results,
         "explanation": explanation,
-        "visualization": visualization,
         "plotly_code": plotly_code
     }

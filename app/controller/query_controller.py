@@ -23,7 +23,4 @@ def nl_to_sql_endpoint():
     if hasattr(result['results'], 'to_dict'):
         result['results'] = result['results'].to_dict(orient='records')
 
-    # Visualization is a Plotly figure; you may want to return a static image or HTML
-    # For now, just indicate if a figure was generated
-    result['visualization'] = bool(result['visualization'])
     return jsonify(result)
