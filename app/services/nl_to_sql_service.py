@@ -28,7 +28,17 @@ def natural_language_to_sql(user_query, model, cursor, schema_info):
     - Use DAY() instead of strftime('%d')
     - Use CONVERT() for date formatting
     - If you use ORDER BY, always include the ordered column(s) in both the SELECT and GROUP BY clauses.
+    - If the user provides just statements, fragments, or questions, always interpret their input as a request to retrieve and display the most relevant data from the database.
 
+    Examples:
+    User: wire breaks in 2024
+    SQL: SELECT COUNT(*) FROM wire_breaks WHERE YEAR(date) = 2024;
+
+    User: how many wire breaks in 2024
+    SQL: SELECT COUNT(*) FROM wire_breaks WHERE YEAR(date) = 2024;
+
+    User: show all wire breaks in 2024
+    SQL: SELECT * FROM wire_breaks WHERE YEAR(date) = 2024;
 
     User query: \"{user_query}\"
     """
@@ -81,7 +91,7 @@ def natural_language_to_sql(user_query, model, cursor, schema_info):
         SQL Used: {sql_query}
         Query Results: {str(results)}
 
-        Answer in 1 line with the key number.
+        Answer like a business person would.
 
         STRICT FORMATTING:
         - No report structure, just answer the question directly.
